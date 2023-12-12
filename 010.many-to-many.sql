@@ -1,77 +1,75 @@
 
--- Crear base de datos biblioteca
-CREATE DATABASE IF NOT EXISTS biblioteca;
+-- RELACIÓN MANY-TO-ONE Y ONE-TO-MANY
+-- La diferecia radica en como tengo organizadas las tablas y la dirección de la relación entre ellas
+-- MANY-TO-ONE
+-- ejemplo:
+-- tabla principal: departamentos, tabla secundaria: empleados
+-- cada empleado trabaja en un solo departamentos, un departamento puede tener varios empleados
 
--- Usar la base de datos biblioteca
-USE biblioteca;
+-- UTILIZAR base de datos universidad
+use universidad;
 
--- Asociación one-to-one
--- tabla de usuario
-CREATE TABLE usuario(
-usuario_id INT AUTO_INCREMENT PRIMARY KEY,
-nombre VARCHAR(50) NOT NULL,
-apellido VARCHAR(50) NOT NULL,
-email VARCHAR(100) NOT NULL
+create table clientes (
+cliente_id int auto_increment primary key,
+nombre varchar(50),
+direccion varchar(100) default 'direccion no especificada'
 );
 
-CREATE TABLE tarjetas_biblioteca(
-tarjeta_id INT AUTO_INCREMENT PRIMARY KEY,
-fecha_expiracion DATE,
-usuario_id INT UNIQUE, 
-FOREIGN KEY (usuario_id) REFERENCES usuario(usuario_id)
--- fk apunta a la primera tabla
+create table ventas (
+venta_id int auto_increment primary key,
+monto decimal(10, 2),
+cliente_id int,
+foreign key (cliente_id) references clientes(cliente_id)
 );
 
 -- Insertar datos
-INSERT INTO usuario(nombre, apellido, email) VALUES
-('Juan', 'Pérez', 'juanperez@gmail.com'),
-('María', 'Gómez', 'mariagomez@gmail.com'),
-('Carlos', 'Martínez', 'carlosmartinez@gmail.com'),
-('Laura', 'Lopez', 'lauralopez@gmail.com');
+insert into clientes(nombre, direccion) values
+('Juan Perez', 'corazon de maria,89'),
+('Ana Rodriguez', 'calle 123'),
+('Luis Gomez', 'Avenida 76');
 
-INSERT INTO tarjetas_biblioteca(fecha_expiracion, usuario_id) VALUES
-('2023-12-31', 1),
-('2023-12-31', 2),
-('2023-12-31', 3),
-('2023-12-31', 4);
+insert into clientes(nombre) values
+('Oscar Javier');
 
-INSERT INTO tarjetas_biblioteca(fecha_expiracion, usuario_id) VALUES
-('2023-12-31', 1);
+-- Insertar datos en ventas
+insert into ventas (monto, cliente_id) values
+(100.50, 1),
+(75.30,2),
+(150.00, 3),
+(60.45, 4),
+(80.00, 1);
+insert into ventas (monto, cliente_id) values
+(450.50, 2),
+(87.59, 3),
+(125.14, 4);
 
+-- Crear dos tablas una "departamentos" y otra de "empleados"
+-- varios empleados puedan trabajar en el mismo departamento (5 empleados en Recursos humanos)
+-- tabla departamento= departamento_id, nombre
+-- tabla de empleados= empleado_id, nombre, apellido, departamento_id FK
 
--- Asociación Muchos a Uno / Uno a muchos
--- Many-to-one/ One-to-Many
-
-CREATE TABLE autores(
-autor_id INT AUTO_INCREMENT PRIMARY KEY,
-nombre VARCHAR(50) NOT NULL,
-apellido VARCHAR(50) NOT NULL
+create table departamentos (
+departamento_id int auto_increment primary key,
+nombre varchar(50)
+);
+create table empleados (
+empleado_id int auto_increment primary key,
+nombre varchar(50),
+apellido varchar(50),
+departamento_id int,
+foreign key (departamento_id) references departamentos(departamento_id)
 );
 
-CREATE TABLE libros(
-libro_id INT AUTO_INCREMENT PRIMARY KEY,
-titulo VARCHAR(100),
-autor_id INT,
-FOREIGN KEY (autor_id) REFERENCES autores(autor_id)
-);
+insert into departamentos (nombre) values
+('Ventas'),
+('Recursos Humanos'),
+('Administración');
 
--- un autor puede tener muchos libros (one-to-many)
--- Insertar datos
-INSERT INTO autores(nombre, apellido) VALUES
-('autor 1', 'apellido 1'),
-('autor 2', 'apellido 2'),
-('autor 3', 'apellido 3'),
-('autor 4', 'apellido 4');
-
--- Insertar libros
-INSERT INTO libros(titulo, autor_id) VALUES
-('Libro 1', 1),
-('Libro 2', 2),
-('Libro 3', 3),
-('Libro 4', 4),
-('Libro 5', 4),
-('Libro 6', 3);
-
+insert into empleados(nombre, apellido, departamento_id) values
+('Laura', 'Rodriguez', 1),
+('Javier', 'Gomez', 1),
+('Ana', 'Lopez', 2),
+('Carlos', 'Garcia', 3);
 
 
 
